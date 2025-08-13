@@ -1,0 +1,7 @@
+*.pt
+Videos
+send_sms.py
+logs.db
+camera_footage
+env
+config.py

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Surveillance Dashboard</title>
+    <link rel="stylesheet" href="/static/dashboard.css">
+</head>
+<body>
+    <h1>Surveillance Dashboard</h1>
+    <div class="videos">
+        {% for camera_id in camera_ids %}
+        <div class="video-container">
+            <h3>Camera {{ camera_id }}</h3>
+            <img src="/video_feed/{{ camera_id }}" width="480" />
+        </div>
+        {% endfor %}
+    </div>
+    <h2>Event Logs</h2>
+    <table id="logs-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Camera ID</th>
+                <th>Event Type</th>
+                <th>Person ID</th>
+                <th>Timestamp</th>
+                <th>Duration (s)</th>
+                <th>Total People</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Log rows will be inserted here -->
+        </tbody>
+    </table>
+    <script>
+        function fetchLogs() {
+            fetch('/logs')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#logs-table tbody');
+                    tbody.innerHTML = '';
+                    data.logs.forEach(log => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${log.id}</td>
+                            <td>${log.camera_id}</td>
+                            <td>${log.event_type}</td>
+                            <td>${log.person_id}</td>
+                            <td>${log.timestamp}</td>
+                            <td>${log.duration !== null ? log.duration.toFixed(1) : ''}</td>
+                            <td>${log.total_people}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                });
+        }
+        fetchLogs();
+        setInterval(fetchLogs, 2000);
+    </script>
+</body>
+</html> 
